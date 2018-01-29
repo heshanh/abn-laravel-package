@@ -1,0 +1,19 @@
+{
+  "name": "heshanh/abn",
+  "description": "GoFax API",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Heshan",
+      "email": "heshanh@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "heshanh\\Abn\\": "src/"
+    }
+  },
+  "minimum-stability": "dev",
+  "require": {}
+}
