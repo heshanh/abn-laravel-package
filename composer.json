@@ -1,6 +1,6 @@
 {
   "name": "heshanh/abn",
-  "description": "GoFax API",
+  "description": "ABN Lookup",
   "type": "library",
   "license": "MIT",
   "authors": [
