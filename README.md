@@ -1,11 +1,11 @@
-# GoFax SOAP PHP SDK
+# ABN Lookup Laravel Package
 
-This SDK provides simple access to the GoFax SOAP API. 
+This SDK provides simple access to the ABN Lookup service. 
 It currently handles the following requests
 
 - List SOAP functions
-- Get list of received faxes
-- Get fax data for a given fax
+- Search for an ABN
+
 
 
 ## Contents
@@ -17,8 +17,10 @@ It currently handles the following requests
 
 Install the SDK into your project using Composer.
 
+You'll need to register with the ABR to get a GUID - http://abr.business.gov.au/RegisterAgreement.aspx
+
 ```bash
-composer require heshanh/gofax
+composer require heshanh/abn
 ```
 
 ## Integrating with Laravel
@@ -30,7 +32,7 @@ This package ships with a Laravel specific service provider which allows you to 
 Add the following to the `providers` array in your `config/app.php` file.
 
 ```php
-heshanh\GoFax\LaravelServiceProvider::class
+heshanh\Abn\LaravelServiceProvider::class
 ```
 
 ### Adding config keys
@@ -38,10 +40,9 @@ heshanh\GoFax\LaravelServiceProvider::class
 In your `config/services.php` file, add the following to the array.
 
 ```php
-'gofax'=> [
-        'api_url' => env('FAX_API_URL'),
-        'api_key' => env('FAX_API_KEY'),
-
+ 'abn' => [
+        'service_url' => env('ABN_SERVICE_URL'),
+        'guid' => env('ABN_GUID')
     ]
 ```
 
@@ -50,8 +51,8 @@ In your `config/services.php` file, add the following to the array.
 In your `.env` file, add the following keys.
 
 ```ini
-FAX_API_KEY=
-FAX_API_URL=
+ABN_SERVICE_URL=
+ABN_GUID=
 
 ```
 
@@ -62,7 +63,7 @@ To resolve a client, you simply pull it from the service container. This can be 
 #### Dependency Injection
 
 ```php
-use heshanh\GoFax;
+use heshanh\Abn;
 
 public function yourControllerMethod(SoapClient $client) {
     // Call methods on $client
@@ -72,7 +73,7 @@ public function yourControllerMethod(SoapClient $client) {
 #### Using the `app()` helper
 
 ```php
-use heshanh\GoFax;
+use heshanh\Abn;
 
 public function anyMethod() {
     $client = app(SoapClient::class);
@@ -85,15 +86,24 @@ public function anyMethod() {
 ```
 $client->getFunctions()
 
-$client->getReceivedFaxes()
-
-$client->getFaxDataFromId($faxId)
+$client->search($abn,  $params)
 
 ```
 
-Refer to the GoFax API documentation for further information
-https://www.gofax.com.au/fax-api/
+```php
+        try {
 
+            $client = app(SoapClient::class);
+            $response = $client->search(51824753556, ['includeHistoricalDetails' => 'N']);
+
+            if (isset($response->ABRPayloadSearchResults->response->exception)) {
+                $response = json_encode($response->ABRPayloadSearchResults->response->exception);
+            }
+
+        } catch (\Exception $e) {
+            //Error!
+        }
+```
 
 ### Testing
 
